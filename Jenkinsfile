@@ -24,39 +24,39 @@ pipeline {
         stage('Plan') {
             steps {
                 sh 'pwd;cd terraform/ ; terraform init'
-                // sh "pwd;cd terraform/ ; terraform plan -out tfplan"
-                // sh 'pwd;cd terraform/ ; terraform show -no-color tfplan > tfplan.txt'
+                sh "pwd;cd terraform/ ; terraform plan -out tfplan"
+                sh 'pwd;cd terraform/ ; terraform show -no-color tfplan > tfplan.txt'
             }
         }
 
         //new stage added
+        // stage('Apply') {
+        //      steps {
+        //         sh "pwd;cd terraform/ ; terraform apply"
+        //     }
+        // }
+
+        stage('Approval') {
+           when {
+               not {
+                   equals expected: true, actual: params.autoApprove
+               }
+           }
+
+           steps {
+               script {
+                    def plan = readFile 'terraform/tfplan.txt'
+                    input message: "Do you want to apply the plan?",
+                    parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
+               }
+           }
+       }
+
         stage('Apply') {
-             steps {
-                sh "pwd;cd terraform/ ; terraform apply"
+            steps {
+                sh "pwd;cd terraform/ ; terraform apply -input=false tfplan"
             }
         }
-
-    //     stage('Approval') {
-    //        when {
-    //            not {
-    //                equals expected: true, actual: params.autoApprove
-    //            }
-    //        }
-
-    //        steps {
-    //            script {
-    //                 def plan = readFile 'terraform/tfplan.txt'
-    //                 input message: "Do you want to apply the plan?",
-    //                 parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
-    //            }
-    //        }
-    //    }
-
-    //     stage('Apply') {
-    //         steps {
-    //             sh "pwd;cd terraform/ ; terraform apply -input=false tfplan"
-    //         }
-    //     }
     }
 
   }
