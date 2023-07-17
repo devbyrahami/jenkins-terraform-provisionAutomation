@@ -4,8 +4,8 @@ pipeline {
         booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
     } 
     environment {
-        AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')    //put your aws access key name here
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY') //put your aws secret key name here
+        AWS_ACCESS_KEY_ID     = credentials('')    //put your aws access key name here
+        AWS_SECRET_ACCESS_KEY = credentials('') //put your aws secret key name here
     }
 
    agent  any
@@ -15,7 +15,7 @@ pipeline {
                  script{
                         dir("terraform")
                         {
-                            git "https://github.com/devbyrahami/jenkins-terraform-provisionAutomation.git"  //put your repo url here
+                            git ""  //put your repo url here
                         }
                     }
                 }
